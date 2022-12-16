@@ -61,6 +61,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:4000",
+      "https://smoothtabs.onrender.com"
       // more specific routes: not needed! http://localhost:4000" is an origin and everything after is allowed
     ],
     credentials: true,

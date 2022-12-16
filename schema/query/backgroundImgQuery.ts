@@ -90,7 +90,8 @@ export const backgroundImgQueryField = {
     }
 
     let backgroundImgUrl =
-      "background_img/" + userId + "/" + backgroundImgFiles[0];
+      "https://smoothtabs-api.onrender.com/" + "background_img/" + userId + "/" + backgroundImgFiles[0];
+      // "background_img/" + userId + "/" + backgroundImgFiles[0];
 
     if (backgroundImgUrl) {
       return {
