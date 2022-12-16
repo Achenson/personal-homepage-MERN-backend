@@ -1,0 +1,827 @@
+"serv": "ts-node-dev --respawn --pretty --transpile-only server.ts",
+
+ // "server": "nodemon --exec ts-node server.ts",
+ "server": "nodemon server.ts",
+
+ issues:
+ 
+ DONE 2. working graphql playground DONE
+ DONE 3. adding user doesn't return anything on graphql playground? (but it returns in changeSettings) (see notes pt.2) DONE
+ DONE 5. bookmarkSchema.ts: is <Array> type enough? [string] DONE 
+ DONE 3. id: string | number or string only? unify with client (client: string only) DONE
+ DONE 4. client: SingleTabData: [object] | never[] | [] ????
+ XX 6. userSchema gets ref to settingsSchema, should it be also the other war around? (ref to settingsSchema is no more there)XX
+   <- not being used actually in the client? (items deleted from rss clientside) DONE
+ DONE 8. client: ALL_TAGS should not be an id but rather deletable property should be used! ids will be added automatically be database DONE
+ DONE 9. deleteUser -> promise.all should be used instead of individual promises? for performance DONE
+XXX 11. deleteTabMutation -> should it also delete related Bookmark automatically? NO -> bookmarks still remain in All folderXX
+ 
+ DONE 14. non-null types: same everywhere! (nonnulles deleted for consitency - loginmut, revoketoken, probable should be implemented partially) DONE
+ ?? 15. fields -> id can be an argument even if it is never used? delete it from fields? (fields are fnot only for args)??
+ DONE 16. upserts in changeMutations -> should be false mostly? (all false )DONE
+DONE 16. make npm run dev open 2 console instances (no changes, npm-run-all worked once tested) DONE 
+ DONE 18. client: comment out useStorage (zustand's perist commented out) DONE
+DONE 18. Column: better error handling? (plain error.message in COlumn & others)DONE
+X 19. bookmarks: better query -> finding the bookmarks matched to a particular tab right away (no point?) X
+XXX 22. use zustand state conditionally if the user is not authenticated. no, zustand state is always on, even if user is authenticated, is just not used in that case XX
+DONE 21. unhandled promise rejections! addUser, - not encountered it anymore
+  good practice-> calling reject with error -> done, returns after reject commented out
+DONE 23. delete testUserId in the end DONE
+  .catch after reject -> unhandled promise rejections should dissapear, tried but catch on undefined errors happened, see #230DONE
+DONE 24. client: rss settings merges with global settings -> test -> delete all commented out code DONE
+DONE 27. globalSettings & single rss settings make it impossible to enter a value other than 5-15! DONE
+DONE 28. client: make + & - for rss itemsPerPage  DONE
+XX 29. Main -> fetching and date are after useEffects (globalSettings in a useEffect dep) but globalSettings is declared already?
+(no img fetchcin in Main anymore, img taken from settings in MainWrapper)) XX
+DONE 30. globalSettings taken either from props or from hooks (hooks cannot apply if useEffect uses globalSettings
++ it requires more code) -> unify? -> currently hook is in MainWrapper & Column  (MainWrapper only now)DONE
+DONE 32. clientside: hooks for store -> sometimes it's state.tabs, sometimes store.tabs -> unify -> unified as store DONE
+??? 33. take care of state other that settings, tabs & bookmarks (use of existings queries should be enough?) ???
+ DONE 34. mutations -> proper typescript types! DONE
+ DONE? 35. client-side: unify column_1 naming with server-side naming (colColor_1 itp) when the client-side code
+ will be working again for nonauthorised user! (colColor everywhere?) ?DONE
+?? 36. addBookmark -> tabQueries should be refetched?
+ (no need? bookmarks are being filterd in Tab by tags instead, bookmarkAllTags is taking care of empty folders) ??
+?? 37. way to use urql as a central state? ??
+DONE 38. editBookmark doesn't work on the client! DONE
+DONE 39. objCreators: too much repetition in db tab creators? DONE
+DONE 40. tabIdsUsedByBookmarks -> change it (it should be a list of all tabs ids that are bookmarks tags tabIdsUsedByBookmarks) or use mongoose query!!!! DONE
+?? 41. newTab -> no color as argument, should be null (createBasicTabs already provides color: null) ??
+?? 42. editing Tab -> bookmarks are not sorted alphabetically! (tested -> should be sorted just right)??
+DONE 43. Tab (and other components further down?) should take tab data from Column (context??), not from db? (data taken from dbContext)DONE
+DONE 45. logic for tab deletion in Grid work only thanks to setTimeout() [in Boomark_lowerUI] -> make it better!!! DONE (result.stale used!!!)
+??45. memory leaks? when adding bookmark (tested - not occured) ??
+DONE 46. bookmark /tabs database interfaces everywhere! (now both from context) DONE
+DONE 47. promise.all -> no need for new Promise everywhere? mutation return promises (change in Bookmark_lowerUI, no promise.all in Grids now, ) DONE
+DONE 47.5 useBookmarks & useTabs -> mark which methods are used server-side! DONE
+XX 48. explain somewhere to the user why disable drag & drop is there (will be incluted in initial note) XX
+DONE 49. rss -> still not working because of CORS, fetch them server side? DONE
+DONE 50. server.ts -> figure out which cors urls are actually needed
+ (no need to include every route - only origin - scheme (protocol), hostname (domain), and port) DONE
+ DONE 52. change app.use to app.get / app.post?
+  (change in case of RSS. app.use is meant for binding middleware, get post etc. to handling a specific route ) DONE
+DONE 53. change server file upload logic to graphql? DONE
+DONE 54. move backgroundImg logic from server.js? (multer.ts created in utils) DONE
+XX 56. clientside: make it possible to choose backgroundImg colors also from settings?
+ or close the modal and open backgroundColors menu (columns colors are on the left anyway)XX
+DONE 57. is path module needed? (server.js (yes)DONE
+DONE 58. status 201 (all statuses in server.ts updated)DONE
+DONE 59. graphql for file upload? use middleware which should detect if the file is attached to post req DONE
+DONE ?61. background img -> currently there is no point in storing it in db, as it is get from server only??
+  (all logic deleted, in legacyCode)DONE
+DONE 62. upload background img -> should use one btn only?? DONE
+DONE 63. cannot upload image if there are spaces in the file name? spaces replaced by "_" DONE
+DONE 66. background img - remove it once the user is deleted? implemented already -test it! {recursive: true} added DONE
+DONE 67. delete all test mutation code in the end DONE
+DONE 69. delete unused test_svgs (for alt links), rename the chosen one DONE
+?? 70. singleBookmarkData: change interface to BookmarkDatabase_i ?
+ (interface for bookmarks is being changed but there maybe problems, see other notes) ??
+XX 71. msg to user when clicking custom img and there is none present (file browser starts instead) XX
+DONE 72. graphql ID vd string type, they may be mixed DONE
+DONE 75. fetchFavicon in server.js -> delete & uninstall? (an API in SingleBookmark used instead) DONE
+? 75. Main -> change context values obj, so it is taken from state directly (done already?) ?
+DONE 73. user creation: check if user name or email already exists DONE
+DONE 74. implement token versioning: refreshToken DONE
+XX 76. AppWrapper, MainWrapper in different placec - chaos? no AppWrapper anymore XX
+XXX 77. UpperRightMenu: loggedInState -> change for it to be compatible with authContext (auth is taken from zustand now) XX
+X78. middleware for token -> generated code for types is being used? (probably not - types taken from types package?)X
+DONE 79. is case of failure, accessToken will be an empty string
+ - to change? compare with loginMutation (only refresh token can be "") DONE
+DONE 81. logout mutation: is refreshing site -why? (not anymore, probably because is going to modal firs?) DONE
+DONE 82. uninstall react-tracked DONE
+??  84. user exp not perfect when logging out? flickering (no longer the case)  ?? 
+DONE 85. Profile & LoginRegister doubled components (Profile & Profile_input deleted)DONE
+DONE !86. change initial load to localhost3000/ !  (client - package.json homepage changed to "/")DONE
+?? 87. auth error - no user or no password - shouln't be separate errors! (Message for login changed)??
+DONE 88. isAuth -> ts errors (RequestWithAuth interface added) DON
+DONE 89. deleting all data when a user is deleted! done already?
+ check (works except for the backgroundImg, see #61) DONE
+DONE 90. option to delete account? DONE
+xxx 91. some img should be created as a custom image in the moment new user is created?
+(instead clicking "custom image" opens window for file browsing)) xxx 
+DONE 92. currently -> not authenticated -> test user from db is used -> change it to client only demo DONE
+DONE 93. notes on queries/schema/mongo etc. DONE
+DONE 94. Main, BackgroundSettings_Upload -> backgroundImgKey -> code not used anymore -> delete?
+(backgroundImgKey was used for context, query from db instead of context now, contex deleted) DONE
+DONE 95. unify rssFetch & backgroundFetch serverside -> errors etc.  DONE
+DONE 98. delete data -> rssExample DONE
+DONE 99. server.ts -> make separate files (params has to be in a route!,
+ for backgroundImg see #254, backgroundUpload - middleware, not a route) DONE
+ DONE 100. server.txs -> rootValue -> is it needed? see notes DONE
+!!! DONE 103. unify callback functions -> function declaration instead of () => { }everywherw in JSX?
+ (changed to function reference in few cases) DONE !!!
+DONE 102  react keys -> they should by indices ! change to id (indices for bookmars and tabs changed) DONE
+DONE 105. delete the other background image (post route? deleted ) DONE
+DONE 106. make it possible to changle background img when not logged in, again DONE
+DONE 107 (pushed - see other notes about backgroundIMgMut first). write notes for file upload system! DONE
+DONE 108. not possible to write even a console.log in backgroundImgMutation even while is working? (backgroundImgMutation resolve
+is not being used - that is how UploadFileType work?) DONE
+DONE 109. backgroundImgUpload funcion -> for !req.body is next() needed? (yes, following code is not executed if there is no body) DONE
+??112. test user Id server.ts check import??
+DONE 113. xxgetting background img automaticallyxx - browse files if there is no user img instead DONE
+DONE 114. fallback if no backgroundImg available?
+ or test it if it is not broking the app at least (no app breaking, white background) DONE
+ ?? 115. backgroundImgQuery -> no variable needed? 
+check after implementing unlogged version (? userId obviusly needed)???
+DONE 116. useCallback -> is it really needed for uploads? no callback used right now
+  (seems to be not needed, see useCallback notes below) DONE
+DONE 118. change background upload UI! DONE
+DONE 119. BackgroudnSettings_Upload typescript issues (alse the code was modified slightly)DONE
+DONE 120. urql query from rss -> archive DONE
+DONE 121. get favicon server.ts -> archive (faviconFetch?)DONE
+DONE 122. ts -> less any types (multer any reduced, most remaining are from mongo models bus see #255)DONE
+DONE 123. custom background img -> should work if there is no file in the beginning? DONE
+DONE 124 (pushed after taking care of context). zustand hooks -> delete or implent when logged out?
+(useLoggedInState deleted) DONE
+? done 125. should refreshToken() return null in case of failure in App.ts?? (returning null now)done ?
+DONE 126. App client code work, but not clear why
+(initial refreshToken() run deleted. loginMutation was not authenticating properly, no the code is clear) DONE
+DONE 127. implement token revoking !!!! DONE
+DONE 128. update token notes (refreshing tokens -> always two tokens are being refreshed, that is by design? yes) DONE
+DONE 130(same as 126). improve getAuth -> it should not include refresh token logic in the first run? DONE
+DONE 132. implement Registration !!! DONE
+DONE 133. revokingToken -> "query was already executed: "mixing promises with callback??
+(deleted error handling) DONE
+DONE 135. LoginSVG -> move to the left? (to the right actually, other svgs also moved) DONE
+DONE 136. change name to username everywhere?  (name on the backend, username frontend - changed UserProfile for consistency)DONE
+DONE 137. changing between 2 differen users, check user queries DONE !!! User.findById(userId) !!!
+DONE 138. registering user with same name/email -> still make db entry!!! even though the err is displayed DONE
+DONE 140. x hide/unhide password x password input type instead DONE
+DONE 141. deleteUserMutation -> keep it! proper way to delete user by admin (deketeUsersByAdmin now)DONE
+DONE 142. mutation.ts -> naming: some with Mutation at the end some not - unify! DONE
+DONE 143. upperUiContext -> logic for demo/unlogged version mixed with ui focus logic (does it work?)
+UserProfile/LoginRegister -> check upperUiContext dispatches, add descriptions?
+(the logic is not mixed in fact, works for both auth and non auth version.
+descriptions added, changed one naming
+notes about tabEditableOpenable:
+  !! tabEditableOpenable -> to solve the problem with tabEditables flickering when closing
+       which is visible when backgroundColor modal overlap with tabEditables
+       in other cases the tab editables are closed by setting tabOpenedState to null
+       both tabOpenedState and tabEditableOpenabe are using individual tab context to close tab editables
+       but tabEditablesOpenable is taken from upperUIContext (which contains Main component)
+       while tabOpenedState is taken from central state (zustand) -> this probably makes it noticably slower: 
+       upperUi change -> tab dispatch vs upperUi change -> change zustand state -> tab dispatch
+       same login for color column left as it was (it uses tabOpenedState)
+) DONE
+DONE 144. clientSide -> change some rendering function to be anonymous inline funcions?? IIFS! (done in LogRegProfile_input) DONE
+DONE 147. darker default background img? (change to darker - slight blueGray) DONE
+DONE 148. after registering -> automatically fill up username field in Login? DONE
+DONE 150. change naming to ByUser & ByAdmin DONE
+DONE 151. check if changeUSer "by admin" works DONE (reworked)
+DONE 153. serverside interfaces are in types files, better interfaces sharing between client and server?
+) (settings and basic types for tabs and bookmarks are being taken by server from client) DONE 
+DONE 154. UserProfile -> mutations should succeed if there is proper field being send back (done? if there is no
+proper fields being return -> generic error) DONE
+DONE 155. better email validation (slightly better)DONE
+xxx 156. UserProfile -> no server connection error -> !res may be not the right kind of logic for it? (seems good enough?) xxx
+DONE 157. UserProfile -> simplify error logic! less ifs, errors received serverside if no proper data returned DONE
+DONE 158. addUserMutation -> change so it distinguish between username and email already present in DB DONE
+DONE 159. all or almost all mutations should have error fields? (for now- only those that client can react differently to,forgotPasswordMutation -> better error handling)  DONE
+DONE 161. successful register message && successful user deletion- when? DONE (in useAuth zustand hook)
+DONE 162. whenever returning to editUser, name & email should be filled again DONE
+DONE 163. UserProfile -> setNotification(null) everywhere not needed? (moved to function)DONE
+DONE 164. prevent copying new password & pastying in password confirmation  DONE
+DONE 165. LoginRegister_input naming change (component also used elsewhere) DONE
+! X 166. after implementing forgot password logic -> make sure that it won't work when token is revoked? (
+  not needed! revoking tokens is intended to be use for eg. is refreshToken got stolen - this does not mean that the hacker
+  has access to users email!) X
+DONE 167.(pushed) changeUserByAdmin and other mutations for admin ->
+test it after app is in production!! DONE
+! X 169. changeUserByAdmin -> changing password - should it be left out? (NO - in case login password was stolen [
+  revokingToken would not be enough, as the db & refreshToken tokenVersion will be again the same after logging in,
+  so password has to be change by the admin])X  !
+DONE 171. deleteUserByAdminMutation -> change so it is possible to delete many users DONE
+DONE 172. deleteUsersByAdminMutation -> not getting proper returned data from graphql, change id naming?
+ (mutations was not returnig data matching field, id naming not changed) DONE
+DONE 173. deleteUsersByAdminMutation -> put delete user first, only then settings etc. DONE
+DONE 175. delete AppWrapper DONE
+DONE 175.5 auth -> zustand, other central state -> context. unify? check downsides of using context
+context placement updated in app structure. DOWNSIDEs: it the notes, seems to be ok in this app  DONE
+DONE 175.75 check if all contexts are used!!! backgroundImgContext adn authContext not being used
+(AuthContext deleted) DONE
+DONE 176. objects as props in more places? like paddingProps in Main (Main & MainRoute improved)DONE
+DONE 177. useAuth zustand hook -> loginErrorMessage -> delete or implement? (deleted) DONE
+DONE 178. after registering & redirecting to login -> focus should be set on password DONE
+DONE 179. after registering -> register fields should be emptied DONE
+xxx 180. focus should be on first field after clicking Login or Register (good-enough)xxx
+DONE !!!! 181. (pushed) clean db in the end - after testing !!!! DONE
+  X 182. wiki-speed-typing - better login/register looks? (good enough) X
+  X 183. login/register modals -> name of the app should be visible somewhere?
+  (goodEnough - visible on the tab) X
+??? 184. Profile_Input passedRef -> check agains BackgroudnSettings_Upload ???
+DONE 185. common upper component for login-register, passwordforgotten & passwordChange (AuthOuterComponent added) DONE
+DONE 187. option to make passwords visible! DONE
+DONE 188. wiki-speed-typing -> check if password retrival is available still - not available! improve DONE
+xx 190. PasswordForgotten  / forgotPasswordMutation -> more consistent naming? (good enough) xx
+DONE 191. PasswordForgotten -> forgotPasswordMutation should return false sometimes and it should be handled?
+to get info clientside that there is no regisered user DONE
+DONE !!! 192. email with all .env codes !!! uj DONE
+DONE 195. displaying res.error.message for graphql errors if it is present? [no but sth should be display clientside accordingly?] 
+(2 times in LoginRegister, ForgottenPassChange & PasswordForgotten. PasswordForgotten & login in LoginRegister -> simpler logic) DONE
+DONE 196. test changePasswordAfterForgot mutation by deleting user in the meantime DONE
+xx 197. ForgottenPassChange should display user name?? (goodEnough)xxx
+DONE 198. Login pass forgot -> should be below Login btn? (done + margin changes) DONE
+DONE 200. tabs reset to default: in auth version happens in Grid, in non-auth in Tab -> unify?
+non-auth: defaultTabContent was taken from context and passed to each individual tab contexts
+tabVisDispatch({ type: "TAB_CONTENT_DEFAULT" }) was used in every individual tab ("TAB_CONTENT_DEFAULT" to delete?)
+(non-auth logic also being handled in grid, "TAB_CONTENT_DEFAULT" & defaultTabContent for useTabs deleted) DONE
+DONE 201. tabIdsUsedByBookmarks -> MERN -> created every time in one of Grid's useEffect (check EditTab_main editTab wrapper also)
+old not-auth -> placed in central bookmarks state. check if it works properly, unify? (auth and non auth logis now in SingleBookmark only) DONE
+DONE 202. Grid tabDeletingPause introduced in MERN version -> can/should it be implemented for non-auth version also? (
+  tab deleting pause is no more! it was used for old logic of empty tab deletion) DONE
+DONE 204. all userIdOrNoId logic -> convert to ? : DONE
+DONE 206. useBookmark -> change ids in the starting data for nonAuth to strings? DONE
+DONE 207. (pushed -> solve auth non-auth problems with bookmarks & tabs first) NewBookmark_UpperUI
+ -> ts-ignore had to be user 2x -> why?? (1 ts-ignore less, more separated logic between auth and notAuth) DONE 
+DONE !!!!! 207. SingleBookmark -> implement icon fallback for nonAuth Version! DONE
+DONE 208. BackgroundSettings-> if no userId -> implement logic to suggest creating an account
+BackgroundSettings_Upload doesn't have to be touched though? code won't be executed DONE
+DONE 209. settings should be unified? add null userId and null to non-auth version?
+ (GlobalSettingsState, notAuth verision has empty string for id and userId, UseGlobalSettingsState include setGlobalSettingsState
+  SettingsDatabase_i on the server extends GlobalSettingsState, but it is the same)DONE
+DONE 210. BackgroundSettings_Upload -> instead of hidden class - do not render in in BackgroundSettings render function DONE
+DONE 211. make non-auth data persist in local storage DONE
+?? 212. Bookmark_local tab_indices - is it needed? (no tab indices use, tabIds used instead)??
+DONE 213. (pushed -> solve auth non-auth problems with bookmarks & tabs first) () SingleBookmark
+ -> interface for nonAuth is being used also for auth?? the one for auth being not used (fixed one mistake in assigning interfaces)DONE
+DONE 214. delete userIdOrDemoId DONE
+DONE 215. (first bug fixes for nonAuth version)  DONE new bookmark DONE, DONE resetToDefaul DONE , allTags when hidden problem, DONE cannot edit tab DONE, DONE cannot delete bookmars DONE 
+DONE 216. allTabsFolder when hidden problem -> taking too much space!? check in auth and non-auth versions
+(tabIsDeletable hidden logic from Tab extended to GapAfterTab) DONE 
+DONE 217. tab deletion confirmation -> implement? (folder would be ok, but especially losing notes accidentaly would be bad) DONE
+DONE 218. check localStorage for auth version (local storage works for nonauth version only) DONE 
+DONE 219. notes -> should be reworked, so they can be edited in place?
+ (middleground solution -> tab is open when edit is clicked, this allows 8 rows instead of 4) DONE
+DONE 220. auth version problems after implementing, non auth version: DONE
+DONE 221. color hooks - to be partially deleted? (resetColors and tabBeingDragged remained) DONE 
+! DONE 222. update App structure - routes! contexts! eg.tabcontext -> for each individual tab!
+(sapling vscode extension! helped) DONE !
+DONE 222. LoginSuccessfull notification (Message) ->  not showing after login! (done - switched to central state, instead of context)
+logoutMessage -> to delete? does not have a chance to be set because of routing (deleted)
+blinking after user deletion! login gets redisplayed  if its display did not finish (done -> setting message to null in UserProfile) DONE
+DONE 223. rssSettings problem -> value lower than 5 and 15 can be entered! no easy way to increase/decrese value?? DONE
+DONE 224. tabDeletingPause in Grid -> hack? explain how it works
+tabDeletingPause is no more -> it was used before to delete empty tab before deleting the last of its bookmark DONE
+DONE 225 (pushed). is aria-label present in all btns? DONE
+x 227. mutations -> sometimes the graphql args are listed, Fields should be imported and spread instead?
+Fields in userType & args -> should they always be the same? (no, it only for convenience) x
+DONE 229. Browser error: Default Client: No client has been specified using urql's Provider.This means that urql will be falling back to defaults including making requests to `/graphql`.
+If that's not what you want, please create a client and add a Provider. (fixed be deleting unused code in App)DONE 
+xx 231. local development -> user has to be created on different pcs separetely or no backgroundImg?? (unrelevant)xx
+DONE 232. rss local -> changing global rss settings is not being reflected immediately
+(if a setting has been changed locally, even after reseting to default)!! (
+  auth version also didn't worked, code reworked) DONE
+DONE 233. rrs itemsPerPage -> test on mobile! real one DONE
+DONE 234. rss itemPerPage -> cannot be set by keyboard to more than 9 -> problem? (solved by making changes on refocus) DONE
+DONE 235. non-auth version problem with less column settings-> missing content? DONE
+DONE 240. (rethink again - slow performance!?) bookmarks are rendered only after tab is open ->
+ maybe they should be just hidden instead? (done for notes also) DONE
+xx 242. utils folder server code -> move up? xx
+DONE 243. background color no pic -> rectangle instead of doc svgs, should be filled with color? DONE
+DONE 244. ts generated file -> get rid of it? (deleted, uninstalled, made note in notes about it) DONE
+DONE 245. fetch RSS query file & graphql -> to delete (rssquery type & rss code in client's graphqlQueriers deleted) DONE
+DONE 247. haslo do gmaila (adres to nodemailera) wyslac DONE
+DONE 248. update queries mutation examples DONE
+DONE 250. login after registering -> "user does not exiss" doen't clean, test all possibilities DONE
+DONE 251. custom backgroundImg name is not displayed when going to backgroundImg options in case it is selected before
+(also - wasCustomClicked logic deleted)DONE
+DONE  253. backgroundImg folders not being deleted from the app after user deletion! 
+DONE 255. request in mutation in queries -> unify type (RequestWithAuth everywhere) DONE
+(only deleteUserByAdminMutation was not working, fixed - recursive true) DONE
+x 257. no authHeader isAuth error console log repeats to many times -> too many redners somewhere?
+ (it's fine, as the message sits in isAuth middleware)x
+DONE 258. where is res in login and logout coming from -> console.log it 
+(see notes, request is passed to graphql resolver, res seems to be added to request object) DONE
+DONE 259. !!! UserProfile does not show on smaller browser window!!! (wrong code in UpperRightMenu_XS) DONE
+x 260. UpperUI comp to delete? (it is still used, even though UpperRightMenu & UpperLeftMenu are being attached to Column now) x 
+xxx 262. after modifing note -> make the empty space below columns smaller? (no need - different solution - #219)xxx
+DONE -not poss to change col colors
+DONe
+-n p to change to normal background
+- not poss to add bookmark, tabs itp for the top menu
+- not possible to change settings
+DONE
+But possible to edit bookmarks, delete, drag
+& possible to add bookmarks, tabs in the lower Ui,
+& possible to edit folders
+DONE background Color possible now in no pic mode
+DONE 264. refreshToken bad request when not logged in -> works, but it should be without error
+(actually this is the error send be server code, changed to 401) DONE
+DONE 265. note cannot be empty -> works only in auth version for now (
+  in fact both were not working -> textarea value consisting of only space characters was allowed) DONE
+DONE 265.5 adding newTab when adding new Bookmark by lower UI (upper ui workd) results in an emptY tab! (in non auth version only) \
+(adding tab logic in lowerUI fixed, code order fixed to be similar to upperUi)DONE
+DONE 268. add some text, explanation in email with pass change (
+one sentence is now visible, seems both text & html field should contain the same message
+for different clients to read)DONE
+DONE 269. changePassword (after clicking token from email) - make better lower margin, too small? 
+(some spaces changed before)DONE
+DONE 270. changePassword (after clicking token from email) - implement hide/show password, passVisible props DONE
+DONE 271. tokenVersion -> why not present in UserField? (UserFields are use in UserType & AddUserType
+in the 2nd case tokenVersion is not returned (to the client), Changed UserType to include tokenVersion,
+ also other interfaces is userType changed) DONE
+DONE 272. authNotification -> change from colors in props to "error" of "notification" types (colors inside component) DONE
+DONE 273. router keys control (escape) does not work - current code is an old code for client demo,
+the logic should use router, check if handleKeyDown in AuthOuterComponent is enough, delete it in children DONE
+!x 275.zustand -> get() or state. (get() is for getting value but not for changing it)  x!
+DONE 276. Lock as opened by default (confusing!) -> Opened/Closed by default? (Default content visibility 2x eye svgs) DONE
+DONE 277. Default content visibility -> works differently in auth and non-auth version!(changing state immediately in non-auth) DONE
+DONE 278 Transparent colors for columns
+Choose default image: 1 2 3  -> more space between those 2 lines, 1st one should function as"backgroung img on" description DONE
+DONE  280. unify shade of red for warnings etc. (red-500 for all warning text, red-600 for some UI elements)DONE
+DONE 282. nonauth v notauth -> unify (unified ad notAuth) DONE
+DONE 282.5 delete background get from server.ts? already using route? (route had to be changed) DONE
+DONE 283. clear svgs (logout for sure) (globeAlt also deleted) DONE
+DONE 284. RESET tabs to default -> change text DONE
+DONE 285. make the UpperRightMenu_XS the default way? (if not, check if height on md: is okay, was changed by #286)
+(not default way, but settings are handled the same on all screen)  DONE
+DONE 286. make the 3 settings modals appear always at the same height (important on a xs screen) DONE
+DONE !287. implement empty tab deletion login in edit bookmark DONE
+DONE 291. BackgroundSettings_Upload -> errors not implemented! bring back commented out code for error div (goodEnough -> both errors in one)DONE
+DONE 291.5 Test uploading wrong type, too large files etc.DONE
+DONE 294. upperUi modals -> make ColorsSettings width same as others (on larger screen), so it is easier to navigate DONE
+DONE 295. ColorsSetting -> margins on the left? too spaced (layout reworked)DONE
+DONE 297. colorsSettings focus on folder/rss/note after pressing escape DONE
+DONE 298. ColorsSettings -> different border for dark colors selection DONE
+DONE !!! 299. cannot move tabs by dragging !!! (Column -> nonAuth auth code fixes for LastGap)DONE
+DONE 300. dbContext -> may be slowing down the app? test by changing context to central state? (app appears to be faster) 
+reexecuteBookmarks NewBookmark_UpperUI & Bookmark_lowerUI -> bring back! DONE
+DONE 301. problem with reloading on auth (check non auth version also) version - problem started with useZustand version of the app?
+ (initial data added for tabs in useTabsDb + MainWrapper is not rendering the app until data_tabs.tabs is on ) DONE 
+DONE 301.5  delete aria-label where it is not needed -> eg. if the text inside the button tag is goodEnough (aria-labelled by
+might have been used in few cases?)DONE
+DONE 302. aria-labelled by to use in few cases? (used in GlobalSettings) DONE
+DONE 302.5 check tabs speed in producion! too slow >  not remembering state after closing the app.
+ -> move the logic to localStorage? disadvantage -> no sync between different devices (
+logic moved not to localStorage, but to each Tab component state ) DONE
+DONE 303. info about files limits somewhere? (info is being shown only before any img is successfully updated) DONE
+DONE 304. check if all dbContext values are being used(reexecuteTabs & staleBookmarks not used - deleted) DONE
+DONE 306. file after file cleaning. order of imports/interfaces!
+  modules components svgs graphqlMutation/queries state context utility funcs etc. static data interfaces
+DONE
+DONE 307. noteEdit -> measure component? (after clicking edit, note is open, height is calculated and based on that the
+number of textarea rows is calculated) DONE
+DONE 308. tabTitles -> currently & is not allowed, but tips & tricks are being set from the beginning! 
+(major rework, special characters are now allowed! no flanking spaces, no commas, no double spaces) DONE
+DONE 309. better tags handling -> in editFolder if the selectables go empty (e. double space) they won't
+be visible again (bug was only in editFolder, selectables visibility was not reset in onChange) DONE
+DONE 310. Default Tab Colors -> Rss too much to the right? DONE
+DONE 314. last npm audi, both server & clientside
+"react-scripts": "^4.0.3", <- working
+"mongoose": "^6.0.7", -> 6.6.0 
+12.09.2022 -> server-> 2high severity
+ -> no fix available; clienside -> 1high severity, dep of react-script but the newset react-script has been installed DONE
+DONE 316. readme files/technical info about the app on github page DONE
+DONE 317. producion / development code change - see comments in forgotPasswordMutation (
+  code changed also in server.ts App MainRoute and RSS_reactQuery) DONE
+318. testing before puting to producition (client & server tested)
+DONE 320. bug -> user register successfully message everytime, even if the user or email is already in the db! not saved in db though DONE
+DONE 321. mention somewhere that only https links are allowed as RSS (tips & tricks) DONE
+DONE 322. mention somewhere that bookmark links should be copied from the browseras they should start with http or https (tips & tricks) DONE
+DONE 324. still possible to enter a tag with comma (if double comma is at the end)
+(comma at the end of the regex deleted -> the string being tested already does not contain it!) DONE
+DONE 324. deps, browser errors check -  Password field is not contained in a form -
+  https://www.chromium.org/developers/design-documents/create-amazing-password-forms/ (better code separtaion for login and reg, form) DONE
+DONE 325. tabs: folders  (server code only) -> if default visibility is set to off, the tab will close just
+after updating it (EditTab_main -> now it changes the openess of a tab only if tabOpenedByDefault was clicked) DONE
+DONE 327. email validation -> do it everywhere! DONE
+DONE 329. wiki-speed-typing should be moved to new stack until april 2023 DONE
+DONE 330. non-standard latin chars didn't work - fixed by /\p{Alpha}/u DONE
+DONE 330.5 testing BrowserRouter (also - change in the URL in forgotPasswordMutation) instead of HashRouter (
+  changed to HashRouter, otherwise password change link and refreshing path other than main won't work,
+same as with with wikispeedtyping app) DONE
+DONE 331. fix typescript warnings! ? upperUiContext deps in UpperRightMenu & UpperRightMenu_XS not included
+check window. & document deps (shouldn't be there according to TS lint) in Main DONE
+DONE 331.5 changes which enabled heroku to work locally - see notes DONE
+??? 332. unmounted component errors for NoteInput -> shown when resizing the window  (could not be replicated) ??
+DONE 333'. Refused to load the image 'https://icon.horse/icon/bbc.com' because it violates the following
+ Content Security Policy directive: "img-src 'self' data:" (changed helmet settings) DONE 
+ DONE 334. helmet would it ever work for production whit settings it to undefined ?
+ Yes! undefined is the default DONE
+DONE 335'.share how to solve the issue wiht heroku deployment on article comments?
+https://dev.to/lawrence_eagles/causes-of-heroku-h10-app-crashed-error-and-how-to-solve-them-3jnl?comments_sort=latest#toggle-comments-sort-dropdown
+ DONE
+DONE 337. back to opening tabs only locally (both auth and nonAuth) due to performance issues:
+  DONE 1. opening state in Tab
+  DONE 1.5 is tabOpenedLocal needed? (delete)
+  DONE 2. auto opening after changin default visibility DONE
+  DONE 3. handling reset DONE
+  DONE 4 edit toggle note open (see interfaces) DONE 
+  DONE 4.5 check useEffect deps & other clienside problems detected
+  bug! flickering when trying to open tab and the reset is off ->
+  happens when clicking Reset if there is nothing to change by it 
+  (fixed be setting closeAllTabsState to false always right after it changes to true, not
+  just in case when a tab is not in a default state) DONE
+  DONE 5 changing initial data & adding tabs/user muts & graphql DONE
+  DONE 6 cleaning db DONE
+  DONE 7. changing tips & tricks DONE
+DONE 338. html autocomplete attribute - at least to prevent autofiling the register form? 
+(conditionally settings autocomplete attribute to "new-password" or "current-password"
+it prevents autofiling but not browser suggestion though)DONE
+DONe 339. delete old git branches (some branches deleted)Done
+DONE 340. favicon  (done using https://favicon.io/favicon-generator/, font - graduate, size - 100)DONE
+DONE 341. issue - ForgottenPassChange was not available when using localhost - fix: 
+change url address to be suitable for HashRouter (#) DONE
+DONE 343'. after each app update on heroku, updating images does not work unless you register again? check!
+to gitignore? (fsExtra used during file upload to create a folder if it is not there,
+backgroundImgs added to gitignore) DONE
+DONE !!! 345. backgroundImgs - disappearing after 24h anyway - fix in future version by usiing heroku together with
+imgur api, save old code to different branch!!!! (imgBB used, old code saved in comments only) DONE
+DONE 347. (imgbb transition) bring back urls saved to db DONE
+DONE 348. send email with all env updated DONE
+DONE 349. info that the image will be deleted after 0.5 year DONE
+DEON 350. info that imgs are visible be the admin DONE
+DONE 351. test uploading png files DONE
+DONE 352. deleting user (by user & by admin) should delete url from db DONE
+DONE 353. naming problem for imgs remains! check zrzut ekranu png ( "(" and ")" changed to "") DONE
+DONE 354. explaining imgbb logic DONE
+DONE 355. backgroundImg route - it is not needed in current version?! change notes
+(route deleted) DONE
+DONE 356. to do for full change to imgBB -> in backgroundImgQuery:
+if there is no backgroung img files on the server (should be gone after max 24h) -> create one by
+taking from db and saving to server (MainRoute - reexecuteBookmarks if no url but if
+custom image in settings is set) DONE
+DONE 357. check app loading times in production  (pure initial loading time,
+purging css was not working, no it works but has to changed in the code
+when working on style in development) DONE
+
+GOOD enough?
+  no GraphQLNonNull used, good enough this time
+  60. flickering when uploadin background img file
+  1. livereload npm (to restart client if any changes in server is detected)
+  guide to implement, not tested:
+  https://stackoverflow.com/questions/62403571/hot-reloading-in-a-react-app-with-express-server
+  10. typescript doesn't work for schemas?
+  manaul static methods with mongoose model methods inside them should be used? use sth different than mongoose - papr?
+  DONE 46. bookmarks not up to date when adding newBookmark if there are none (auth vers only)
+  -> hacky solution only, reexectuing query in Bookmarks which causes rerender - solve?
+  (possible solution to get rid of rerender at least -> no bookmarks in any of useeffect? diff way for calc. tabIdsUsedByBookmarks)
+  no useeffect using bookmarks, no tabIdsUsedByBookmarks -> it is probably the issue with urql DONE
+  done 51. fix any types (server.js multer?) (isAuth interface but not used in multer, backgroundImgResult types) done
+  DONE 64. npm modules should be imported like: import multer = require("multer"). with const typescript types are not working!!
+  change everywhere!!  (change with exception of jsonwebtoken, some ts-ignores added in server.ts,
+  const instead of import in express.Router(), problems with mutation & query root see #246)DONE
+  ? 96.server.ts unify -> different reponses, sometimes they are objects - not needed
+  good enough? - rss & backgroundImg unified, token different but it is more complex ?
+  x 104. multer.any() <- change to single("name") somehow 
+  seems there is no way to validate if multer is used as a callback,
+  it maybe possible if it was uses inside a graphql resolver
+  https://github.com/apollographql/apollo-server/issues/301 x
+  xx 129. implement willAuthError for better performance (goodEnough) xx
+  x 149. more rigid password checking (eg. gmail req. is similar)x
+  xxx 160. editUser -> update causes flickering due to reexecuting query (left, urql problem?) xxx
+  xx 168. objectAssign -> convert to function? (good enough, but not type safe) xx
+  xxx 170. AuthNotification components -> implement in UserProfile (good enough - AuthNotification would actually mean more codelines)xxx
+  xx 174. development mode -> should work also when offline? (good enough)xx
+  x 194. changePasswordAfterForgot -> in case of token expiration -> link to forgotpass should be visible (good enough) x
+  xx 199. tabsDb and tabsNotAuth etc -> should be in props instead of taken out of Context every time? less code3
+  (purpose of context/state management it to not think about props!)xx
+  x 221. objCreators -> bookmarkNonAuth done wrong? id not needed in db version? (good enough, id is ignored later in
+  addBookmarkMutation) x
+  xxx 224. (pushed -> no hover field anywhere, but should it be introduced? or may be as display at hte top) 
+  globalSettings rss items number-> hover field, implement is alse elsewhere?? xxx
+  x 225. Disable drag & drop -> should be sth like disable drag & drop for tabs?? (make hover hints or put in about) x
+  x 226. tabsData, bookmarkData, settignsData -> same as client but with userId? unify?  (good enough)x
+  DONE 239. (pushed, same reason as above) bookmarks itp -> in the end ts is chosing the type by itself, even if it should be split type
+  (before, bmarks & tabs changed 2 times to allow proper ids as keys for mapping, global setting interfaces overhaul, rest - good enough)) DONE
+  xx 246. root mutation & query files -> fix types (after changin const to import) one of the mutation is done right - compare!
+  (left as it is -> problem with GraphQLFieldResolver type, it wants ExpressReqRes before arguments in the resolve, code does not work is this ts error is gone) xx
+  x 252. clientSIde reaction to rss and background img query errors? (goodEnough, rss is taken care of, img errot doesnt'
+  break app, no background img is shown instead) x
+  x 189 email with pass change ended once in span -> put warning to check spam? (put it in known issues of about section)x
+  xx 274. ForgottenPassChange -> implement error if accessing the route through random characters in the url?
+  (goodEnough as it now, easy way to access componetent)xx
+  DONE 281. write about Note, implement a way to bring it back? 
+  (after deleting, about & tips & tricks can be brought back by clearing storage/browser data as an unregistered user) DONE
+  xx 292. SingleBookmark & Bookmark_lowerUi -> for db, the code for deleting empty is doubled, for notAuth 
+  -> all logic resides in useBookmarks. unify? (not worth it, code short and not exactly the same)xx
+  xx 296. consider making all settings the same width alwass (wider "tabs" in ColorsSettings made instead) xx
+  DONE 305. image error is being shown only 1st time or 1st time after successful img upload 
+  (if same file is being uploaded  -> no res from the server)) workaround ->
+   error is not being set after clicking one of 3 default imgs. "error" color changed to black DONE
+  xx 336'. favicons should not have alt text as is gets in the way in case of problems (goodEnough) xx
+GOOD enough
+
+TO implement in future versions/project?
+  x 263. option to reset single Tab color to default? (goodEnough for now, all tabs have to reseted) x 
+  willAuthError
+  a way to remember tabs' column position?
+  reset Btn is sometimes enabled even if there is nothing to change by it (
+    this is due to tab state being tracked only locally, in the previous version it also happened,
+    only not for tabs (but for tab colors))
+  logo? what should clicking it do
+  cut loading times ?
+  DONE persistent file uploads - currently there are being stored for less than 24hours:
+  (implemented imgbb) DONE 
+  get rid probably excessive renders when no img is present and is being taken from db(MainRoute)
+TO implement in future versions?
+                                  
+All current issues fixed!
+
+NOTES
+
+======================================
+!!!!! code changing whet between development and production mode
+
+1. Helmet in server.ts:
+
+swap the code with commented out version to get localhost:4000/graphql working locally!!!
+
+2. tailwind:
+
+production mode: in client, add "enabled: true," in tailwind.js,
+-> cd client, npm run build:css
+development mode: comment out "enabled: true," in tailwind.js,
+-> cd client, npm run build:css
+
+======================================
+JWT logic: 
+
+0. LoginRegister component -> login Mutation ->
+res from the server contains the refresh token in a cookie and is setting it on client(see below),
+access token & authenticatedUserId is taken from the server response and saved to central state
+
+serverside: Login mutation (vars: name/email, password): 
+1. searches db by name/email
+2. check if password is valid
+3. sends refresh token (first creates it) in a cookie? (from the server)
+ - so client has a refresh token in a cookie set now!!
+refresh token is being send in a request from the client only if hiting /refresh_token (point 6)
+4. creates accessToken, returns it in the server response so it can be stored in central state (point 0)
+
+5. clientside (urqlClient in App.tsx - addAuthToOperation):
+ every request to the server is going to have access token (in the headers) taken from central state
+
+6. clientside during every app reload:
+
+ App.js is posting to /refresh_token route on the server,                           
+  which verifies if client has a valid refresh token in a cookie,
+  if yes -> 
+    server creates new refresh token and sends it back
+    server sends access token in a response from the server
+    access token is stored clientside in memory (central state)
+  if no ->
+    user is logout, has to login to create new refreshToken
+
+7. creating new access token if old expires ->
+
+isAuth middleware is checking the validity of access token in request headers on various mutations/queries
+if accessToken is invalid -> req.isAuth is false
+respective mutatation/queries return GraphQL error
+in App, getAuth runs if there is a specific auth error,
+(it runs logic corresponding to authstate being already there, meaning this in not the first app launch)
+getAuth runs only if didAuthError's graphql error message is the same as error message returned from mutation/queries
+("If didAuthError returns true, it will trigger the exchange to trigger the logic for asking for re-authentication via getAuth.")
+ this results in posting to /refresh_token,
+-> if refresh token is valid:
+new refresh token is send in a cookie, new access token is send and stored in a central state
+-> if refresh token is invalid:
+user is logout, has to login to create new refreshTokne
+
+8. logOut -> setting empty string in a cookie instead of refresh oken + setting access token to null & isAuthenticated to false clientside
+
+9. what happens on app reload
+
+see comments in App.tsx 
+
+10. revoking tokens:
+
+tokenVersion == 0 when creating user
+when creating refreshToken ->refreshTokens' tokenVersion == user.tokenVerssion
+to invalidate user -> mutation to increment user's tokenVersion in db
+when the user tries to refresh tokens(reloading or after the accessToken runs out),
+/refresh_token path checks if his user.tokenVersion match the version from the refresh token in his cookies
+if not: new accessToken & refreshToken is not being sent
+-user can still use App until accessToken run out (or until he reloads)
+BUT new refreshToken would still be created if the user Logs in again -
+so password has to be changed first be the admin
+intended to be used when a third party has stolen refreshToken. They can still use the app until accessToken is valid,
+or if they know user's credentials
+
+11. Not implemented:
+willAuthError ->run before a network request is made.
+We can use it to trigger the logic in getAuth without the need to send a request and get a GraphQL Error back.
+BUT it will cause login & logout mutation to fail, unless the a complicated code is written (check urql docs for more)
+
+To so sum up, after login: 
+1. Client has a cookie with refresh token (that is not being sent with every request, but only to /refresh_token endpoint),
+access token is stored in client's memory (state manager)), and it is being sent in every request to the server (in headers)
+(mutations/queries are being protected by isAuth on the server, which checks if there is proper accessToken set in the header, see 3. below)
+
+2. app reload: post to /refresh_token route -> after validating if client has proper refresh token in a cookie, new refresh token & access token is being sent to client
+-> no proper refresh token -> logout (isAuthenticated -> false)
+
+3. isAuth middleware failure (invalid accessToken probably because it is expired) results in creating new refresh token & access token 
+(assuming refresh token is still valid, if not -> logout (isAuthenticated -> false)) 
+
+
+setting nodemailer -> 2 step authentication in gmail -> setting app password
+https://stackoverflow.com/questions/59188483/error-invalid-login-535-5-7-8-username-and-password-not-accepted?answertab=trending#tab-top
+
+
+===========
+mongo/schema etc .notes
+
+
+server.ts -> graphql server from express-graphql, that takes a schema
+schema -> root mutation & root query
+individual mutations & queries -> using models from mongoModels folder (root of the app)
+
+client -> graphql folder -> graphql queries for mutation & queries
+
+================  useCallback & useMemo
+https://kentcdodds.com/blog/usememo-and-usecallback
+
+useMemo - memoization
+useCallback - memoization of functions
+useCallback & useMemo (probably only!) usecases:
+
+1. useEffect depedency are objects or functions
+(if not, the useEffect will rerun every time the component rerenders, as even if the object is identical, it is not referentially equal)
+
+2a (useMemo). optimizing unnecessary rerenders - if rerendering parent component causes unnecessary rerender of child component,
+ex. if other child updates parent's state)
+ -> most time you should not bother (unless they are sth heavy like animation)
+
+2b (useCallback) optimizing unnecessary rerenders - if a function is passed from parent to child - it will cause child
+to rerender if parent rerenders as the function will be new
+
+3. (useMemo) computionally expensive calculations
+
+====== passedRef
+userd in LogRegProfile_input to focus on first field on component mount
+parent component is using useEffect to focus on ref, which is passed to first LogRegProfile_input component
+
+==== downsides & tips of using context
+context will rerender any components that are using it,
+even if they not use the value that has just changed. Should be used for data that
+is changed with low frequency, should be kept relatively close in app structure,
+ should be split to as many contexts as possible. seem to be ok in this app
+
+
+====== grahql-codegen -> potentially v. usefull in the future
+ "@graphql-codegen/cli": "^2.7.0",
+  "@graphql-codegen/typescript": "2.2.2",
+  "@graphql-codegen/typescript-resolvers": "^2.6.7",
+
+
+===== value being passed to graphql resolvers
+  rootValue: A value to pass as the rootValue to the graphql() function from GraphQL.js/src/execute.js.
+    context: A value to pass as the context to the graphql() function from GraphQL.js/src/execute.js.
+    differences:
+    "Generally, the context value is information that is useful at any point during query execution. A canonical example
+    is the current logged in user. The root value represents the "top" of your metaphorical graph of data, and is useful
+    to include functions or data to help resolve the root fields in your schema."
+
+     If context is not provided, the request object is passed as the context.
+    !!!  It seems that the response (as res) is added to this request object (is is being used in loginMutation & logoutMutation)
+
+
+==== file upload system
+
+- image is being send in graphql mutation with  UploadFileType, resolver is not being used.
+Image is attached as a request body
+- multer is being used as a middleware in server.ts -> it runs everytime there is a body in a request, and if the user if authenticated
+(req.isAuth)
+- image is initially being saved not in a db, but on the server! (in backgroundImgs folder)
+(following imgbb logic added later due to heroku not keeping additional files
+  https://devcenter.heroku.com/articles/simple-file-upload
+  "Adding direct uploads to your app allows you to offload the storage of static files from your app.
+  This is crucial on Heroku, because your app’s dynos have an ephemeral filesystem.
+  This means that all files that aren’t part of your app’s slug are lost whenever
+  a dyno restarts or is replaced (this happens at least once a day).")
+- in multer.ts - creating the backgroundImg folder/userId folder if it does not exist
+- in server.ts imgbb-uploader package is taking the just saved img and store it in imgbb with an url
+- the url is being saved to mongodb along with userId
+
+== file query:
+backgroundImgQuery in Main is generating url (using files on the server) with users id in it, this url is passed to MainRoute
+In MainRoute an express route is using the passed url directly in backgroundImage style,
+this is image is being served from express in a static method, not in route!
+(following imgbb logic added later)
+- in backgroundQuery -> if no image is present in the backgroundImg folder or the folder does not exist:
+recreating the folder, downloading image (using url in mongodb) and saving it
+- in MainRoute - reexecuteBookmarks logic after timeout if custom image settings is on, but url is empty
+(can cause excessive rerenders, setTimeout cannot be set to low value)
+- logic implemented for the edge case when there is no url in the db, it would cause infinite rerenders
+
+- images cannot be deleted by the user from imgbb only from mongodb
+- images from imgbb will be gone after 6 months
+- WARNING admin can see images in imgbb
+
+
+============ rss links for testing
+
+/*  RSS links for testing
+Not working in production! due to mixed content (http request on https domain)
+  "http://rss.cnn.com/rss/edition.rss"
+  "http://rss.sciam.com/basic-science"
+
+ [ // !!! RSS_reactQuery should run the second URL in case of error
+    rssLink: "http://rss.sciam.com/basic-science",
+    // rssLink: "http://rss.sciam.com/basic-science?format=xml", !!!]
+
+   rssLink: "https://dailygalaxy.com/feed/",
+    // rssLink: "https://tvn24.pl/najwazniejsze.xml",
+    // rssLink: "https://feeds.feedburner.com/sciencealert-latestnews"
+    // rssLink: "https://science.sciencemag.org/rss/twis.xml", <- works, but date & description unknown
+    // rssLink: "https://techbeacon.com/rss.xml"  
+    // rssLink:  "https://feeds.theguardian.com/theguardian/uk-news/rss"
+*/
+==== tailwind
+see notes in client folde
+
+======================
+other notes
+
+backgroundSettings_Upload -> reexecute query works only after introducint async function!
+
+react-tracked -> optimized rerender for zustand itp?
+
+//// bookmarkAllTags purpose -> delete a Tab if its last bookmark is deleted  not used anymore///
+
+// 1. testing sending test cookie in request using postman
+// cookies -> add domain: localhost -> coookie name: jid
+// console.log(req.headers);
+
+//  testing: send login mutation in graphql, get accessToken
+// testin2: take refresh cookie from res (sieć)
+  
+"urql": "^2.0.5"
+
+firecamp upload mutation: 
+variables should be like that:
+{
+  "image": ""
+}
+
+
+1. in GraphQL, all types are nullable by default!
+2. to get object from mutation with saving: return a promise, resolve with the product!
+3. urql - results.stale may be crucial for having up to date db data! 
+
+============================
+Heroku deployment (modified, originally in wiki-speed-typing):
+
+0.heroku account
+1. server.js:
+- const PORT = process.env.PORT || 4000;
+(in wiki-speed-typing - after cors logic)
+- if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+} [heroku will autumatically config its vars so that NODE_ENV === "production"]
+
+2. in all aplication -> const environment = process.env.NODE_ENV;
+conditionally make all serverside URLS either http://localhost:4000/ or "/"
++ change the link being send to the client for password change
+
+3. scripts, so npm run build in the client run automatically on heroku
+script "heroku-postbuild" <- this exact name!
+script "start" <- also for heroku
+
+4. app.js, index.js, schema.js -> logic dependent on if app is in production or development mode
+
+5. heroku site -> new app-> setting -> config vars -> add the save vars as in .env (without ""!)
+
+? 6. HashRouter instead of BrowserRouter!!! otherwise you won't be able to refresh routes other than main,
+and link send by email(password change) won't work
+
+7. heroku site -> deploy -> "Heroku Git, use heroku cli" -> install heroku app cli-> 
+in vscode terminal: heroku login -> follow instruction from the last option (when git repo already exist) 
+(not sure if this step in necessary -> maybe deploying with github is enough? heroku app cli is useful though)
+ [[ heroku login -> heroku create... -> git push heroku master old instructions - not needed? ]]
+
+8.integrating with github -> heroku site -> deploy -> GitHub -> will be directed to GitHub login ->
+set automatic deploy, manual deploy of the main branch
+
+9. add in package.json (same node version as being used in development!)
+   "engines": {
+    "node": "14.x"
+  },
+
+10. app didn't work in the beginning, steps taken:
+
+type heroku local for trying to get it run locally:
+
+clientside: 
+
+react-scrips -> move out of dev dependencies to normal dependencies
+same with all typescript @types... dependencies
+
+serverside:
+
+  "engines": {
+    "node": "14.x"
+  },  [not sure if needed actually]
+
+scripts: "start": "ts-node --transpile server.ts",
+[heroku local was working first without --transpile flag, but the app wouldn't start due to ts errors!]
+
+deleted from package.json -> "type": "module",  be sure that module: "commonjs" is present is tsconfig.json
+https://stackoverflow.com/questions/62096269/cant-run-my-node-js-typescript-project-typeerror-err-unknown-file-extension
+[heroku local issue -> it also asked for adding "type": "module" first but later I had to remove it? not sure]
+
+serverside -> ts-node, & later typescript moved out of dev deps (but @types.. deps remained in dev dependencies!)
+
+
+[for redux.devtools ]8 !!!!! store.js redux.devtools -> uncomment when in development!!!!

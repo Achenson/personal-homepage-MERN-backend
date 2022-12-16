@@ -1,0 +1,1022 @@
+//AppWrapper
+import React, { useState } from "react";
+
+import App from "./App";
+
+import { AuthContext } from "./context/authContext";
+
+import { AuthContextObj_i } from "./utils/interfaces";
+
+/* interface Props {
+  globalSettings: SettingsDatabase_i;
+} */
+
+function AppWrapper({}): JSX.Element {
+  const [authContext, setAuthContext] = useState<AuthContextObj_i>({
+    isAuthenticated: false,
+    authenticatedUserId: null,
+    accessToken: null,
+    loginNotification: null,
+    loginErrorMessage: null,
+  });
+
+  let authValue = {
+    isAuthenticated: authContext.isAuthenticated,
+    authenticatedUserId: authContext.authenticatedUserId,
+    accessToken: authContext.accessToken,
+    loginNotification: authContext.loginNotification,
+    loginErrorMessage: authContext.loginErrorMessage,
+    updateAuthContext: setAuthContext,
+  };
+
+  return (
+    <AuthContext.Provider value={authValue}>
+      <App />
+    </AuthContext.Provider>
+  );
+}
+
+export default AppWrapper;
+
+
+
+=================//testMutation
+
+const graphql = require("graphql");
+
+===============// const Bookmark = require("../../mongoModels/bookmarkSchema");
+
+/* import {
+  BookmarkFields,
+  BookmarkType,
+  BookmarkDatabase_i,
+} from "../types/bookmarkType"; */
+
+import { TestMutationField, TestMutationType } from "../types/testMutationType";
+
+export const testMutationField = {
+  type: TestMutationType,
+  args: {
+    ...TestMutationField,
+  },
+  //   resolve(_source: unknown, args: {stringToAdd: string}) {
+  resolve(rootValue: any) {
+    // see commented out middleware in server.js before /graphql endpoint
+    console.log(rootValue.request.customKey);
+  },
+};
+
+=================// client graphql
+export const TestMutation = `
+  mutation (
+    $stringToAdd: String,
+    ) {
+    testMutation (stringToAdd: $stringToAdd, 
+      
+        ) {
+         stringToAdd
+    }
+  }
+`;
+
+====================// testtMutationType
+
+import { GraphQLString, GraphQLObjectType } from "graphql";
+
+export const TestMutationField = {
+  stringToAdd: { type: GraphQLString },
+};
+
+export const TestMutationType = new GraphQLObjectType({
+  name: "testMutation",
+  fields: () => ({
+    ...TestMutationField,
+  }),
+});
+
+
+===================// server.ts
+
+const faviconFetch = require("favicon-fetch");
+
+app.get("/favicon/:faviconUrl", (req: Request, res: Response) => {
+  console.log("getting favicon");
+
+  let fetchFavicon = faviconFetch({
+    uri: `${decodeURIComponent(req.params.faviconUrl)}`,
+  });
+  // console.log(fetchFavicon);
+
+  if (fetchFavicon) {
+    res.status(201).json({
+      favicon: fetchFavicon,
+    });
+    return;
+  }
+
+  res.status(500).json({
+    error: "No favicon available",
+  });
+});
+
+
+// for testing only
+export const testUserId = "61b21a61cc1846bfa9ca8a8e"
+
+
+==================//server.ts
+
+// app.post(
+//   "/background_img/:userId",
+//   // upload.single("backgroundImg"),
+//   (req: any, res: Response) => {
+//     // console.log("POST req.isAuth POST");
+//     // console.log(req.isAuth);
+
+//     const authHeader = req.get("Authorization");
+//     // console.log(req.headers);
+//     // const authHeader = req.headers.authorisation;
+
+//     console.log("POST authHeader POST");
+//     console.log(authHeader);
+//     // console.log("req.headers backgroundImg");
+//     // console.log(req.headers);
+//     // const authHeader = req.headers.authorisation;
+
+//     backgroundImgUpload(req, res, function (multerErr) {
+//       if (multerErr) {
+//         if (multerErr instanceof multer.MulterError) {
+//           res.send({ error: multerErr.message });
+//           return;
+//         }
+//         // res.status(500).send({error: multerErr})
+//         // res.send(multerErr);
+//         res.send({ error: "Only .jpg and .png files are accepted" });
+
+//         return;
+//       }
+
+//       let newBackgroundImg = {
+//         // userId: userIdOrDemoId,
+//         userId: req.params.userId,
+//         backgroundImg: req.file.path,
+//       };
+
+//       BackgroundImgSchema.replaceOne(
+//         // { userId: userIdOrDemoId },
+//         { userId: req.params.userId },
+//         newBackgroundImg,
+//         { upsert: true },
+//         (err: Error, backgroundImgProduct: BackgroundImg) => {
+//           if (err) {
+//             console.log(err);
+//             res.status(500).json({
+//               error: err,
+//             });
+
+//             removeBackgroundImg(newBackgroundImageName, req.params.userId);
+//             return;
+//           }
+
+//           // let dest = "backgroundImgs/" + userIdOrDemoId + "/";
+//           let dest = "backgroundImgs/" + req.params.userId + "/";
+
+//           fs.readdirSync(dest).forEach((file: string) => {
+//             // console.log(file);
+
+//             if (file !== newBackgroundImageName) {
+//               removeBackgroundImg(file, req.params.userId);
+//             }
+//           });
+
+//           res.status(201).json({
+//             message: "Created product successfully",
+//             createdProduct: backgroundImgProduct,
+//           });
+//           // res.send(backgroundImgProduct)
+//           // res.send({message: "done"})
+//           // res.statusMessage = backgroundImgProduct.backgroundImg
+//           // res.send("aaaaaaaaaaaaaaaaaaaaa");
+//         }
+//       );
+
+//       // console.log(req);
+//       // console.log(req.file.path);
+
+//       /* let newBackgroundImg = new BackgroundImg({
+//       userId: testUserId,
+//       backgroundImg: req.file.path,
+//     }); */
+//     });
+//   }
+// );
+
+
+
+
+
+//Profile
+
+import React, { useState, useEffect, useRef } from "react";
+import FocusLock from "react-focus-lock";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
+
+import { ReactComponent as CancelSVG } from "../../svgs/alphabet-x.svg";
+
+import Profile_input from "./Profile_input";
+
+// import { useLoggedInState } from "../../state/hooks/useLoggedInState";
+// import { useDefaultColors } from "../../state/hooks/colorHooks";
+import { useUpperUiContext } from "../../context/upperUiContext";
+// import { useAuthContext } from "../../context/authContext";
+import { useAuth } from "../../state/hooks/useAuth";
+
+import { handleKeyDown_upperUiSetting } from "../../utils/funcs and hooks/handleKeyDown_upperUiSettings";
+import { SettingsDatabase_i } from "../../../../schema/types/settingsType";
+import { LoginMutation } from "../../graphql/graphqlMutations";
+
+import { AuthDataInput_i } from "../../../../schema/types/authDataType";
+
+interface Props {
+  mainPaddingRight: boolean;
+  scrollbarWidth: number;
+  globalSettings: SettingsDatabase_i;
+}
+
+function Profile({
+  mainPaddingRight,
+  scrollbarWidth,
+  globalSettings,
+}: Props): JSX.Element {
+
+  let navigate = useNavigate()
+
+  // const uiColor = useDefaultColors((state) => state.uiColor);
+  const uiColor = globalSettings.uiColor;
+
+  const [loginOrRegister, setLoginOrRegister] = useState<"login" | "register">(
+    "login"
+  );
+  // const loggedInState = useLoggedInState((state) => state.loggedInState);
+  // const setLoggedInState = useLoggedInState((state) => state.setLoggedInState);
+
+  const upperUiContext = useUpperUiContext();
+  const authContext = useAuth();
+  const loginAttempt = useAuth((store) => store.loginAttempt);
+
+  let firstFieldRef = useRef<HTMLInputElement>(null);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [email_or_name, setEmail_or_name] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordForRegister, setPasswordForRegister] = useState("");
+  const [passwordForRegisterConfirm, setPasswordForRegisterConfirm] =
+    useState("");
+  const [loginErrorMessage, setLoginErrorMessage] = useState<null | string>(
+    null
+  );
+
+  const [loginMutResult, loginMut] = useMutation<any, AuthDataInput_i>(
+    LoginMutation
+  );
+
+  useEffect(() => {
+    if (firstFieldRef.current !== null) {
+      firstFieldRef.current.focus();
+    }
+  }, []);
+
+  let finalColorForImgBackgroundMode = uiColor;
+
+  if (uiColor === "blueGray-400") {
+    finalColorForImgBackgroundMode = "blueGray-700";
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
+  function handleKeyDown(event: KeyboardEvent) {
+    handleKeyDown_upperUiSetting(event.code, upperUiContext, 8);
+  }
+
+  function loginValidation() {
+    console.log("sth");
+
+    if (email_or_name === "" || password === "") {
+      // !!! change
+      setLoginErrorMessage("Email or password not provided");
+      console.log("Email or password not provided");
+      return;
+    }
+
+    console.log("name email provided");
+
+
+    
+
+    // diffent than in apollo!
+    loginMut({
+      email_or_name: email_or_name,
+      password: password,
+    }).then(
+      (res) => {
+        console.log("RES DATA");
+        console.log(res.data);
+        console.log(res.data.loginMutation);
+        
+      
+        if (res.data.loginMutation.token === "User does not exist!") {
+        // if (res.data.login.token === "User does not exist!") {
+          // setLoginErrorMessage(`${res.data.login.token}`);
+          console.log(res.data.token);
+          setLoginErrorMessage(`${res.data.token}`);
+          return;
+        }
+
+        if (res.data.loginMutation.token === "Password is incorrect!") {
+        // if (res.data.login.token === "Password is incorrect!") {
+          // setLoginErrorMessage(`${res.data.login.token}`);
+          console.log(res.data.token);
+          setLoginErrorMessage(`${res.data.token}`);
+          return;
+        }
+
+
+        if (!res) {
+          return;
+        }
+
+        // if (loggedInState === false) {
+        //   setLoggedInState(true);
+        // }
+
+        // console.log("loginMut res");
+        // console.log(res);
+
+        setLoginErrorMessage(null);
+
+        
+        
+        loginAttempt(
+          true,
+          res.data.loginMutation.userId,
+          res.data.loginMutation.token
+        );
+
+        // authContext.updateAuthContext({
+        //   ...authContext,
+        //   isAuthenticated: true,
+        //   authenticatedUserId: res.data.userId,
+        //   // authenticatedUserId: res.data.login.userId,
+        //   accessToken: res.data.token,
+        //   // accessToken: res.data.login.token,
+        //   // token: res.data.login.token,
+        // });
+
+
+        // !!! display message that the login was successful
+        // setLoginNotification(null);
+
+        // history.push('/')
+        // no going back! not possible to go back to login when logged in
+        // !!! no react router will be implemented?
+        // history.replace("/");
+
+        // history.replace("/") equivalent in react-router-dom 6
+        navigate("/", {replace: true})
+
+
+        // upperUiContext.upperVisDispatch({
+        //   type: "PROFILE_TOGGLE",
+        // });
+
+
+
+
+        upperUiContext.upperVisDispatch({
+          type: "MESSAGE_OPEN_LOGIN",
+        });
+
+      },
+      (err) => {
+        console.log(err);
+        setLoginErrorMessage("Server connection Error");
+        return;
+      }
+    );
+  }
+
+  return (
+    <FocusLock>
+      <div
+        // justify-center changed to paddingTop so login & register are on the same height
+        className="flex flex-col z-50 fixed h-full w-screen items-center"
+        style={{ backgroundColor: "rgba(90, 90, 90, 0.4)", paddingTop: "30vh" }}
+        onClick={() => {
+          // upperUiContext.upperVisDispatch({ type: "PROFILE_TOGGLE" });
+          navigate("/")
+        }}
+      >
+        <div
+          className="relative"
+          onClick={(e) => {
+            e.stopPropagation();
+            return;
+          }}
+        >
+          <div
+            className={`bg-gray-100 pb-3 pt-5 border-2 px-4 border-${uiColor} rounded-sm relative`}
+            style={{
+              width: `350px`,
+              marginLeft: `${
+                mainPaddingRight && scrollbarWidth >= 10
+                  ? `-${scrollbarWidth - 1}px`
+                  : ""
+              }`,
+            }}
+          >
+            <div className="absolute right-0 top-0 mt-1 mr-1">
+              <button
+                className="h-5 w-5 focus-2-offset-dark"
+                onClick={() => {
+                  // upperUiContext.upperVisDispatch({ type: "PROFILE_TOGGLE" });
+
+                  navigate("/")
+
+                  upperUiContext.upperVisDispatch({
+                    type: "FOCUS_ON_UPPER_RIGHT_UI",
+                    payload: 8,
+                  });
+                }}
+                aria-label={"Close"}
+              >
+                <CancelSVG className="h-5 w-5 fill-current text-gray-600 cursor-pointer hover:text-gray-900" />
+              </button>
+            </div>
+
+            <div className="">
+              <div className="mx-auto w-32 flex justify-between">
+                <button
+                  onClick={() => {
+                    setLoginOrRegister("login");
+                  }}
+                  className={`${
+                    loginOrRegister === "login"
+                      ? "cursor-default" +
+                        " " +
+                        "text-" +
+                        finalColorForImgBackgroundMode
+                      : "hover:text-opacity-50 cursor-pointer text-gray-400"
+                  } text-lg  focus-1-offset`}
+                >
+                  <span>Login</span>
+                </button>
+
+                <button
+                  className={`${
+                    loginOrRegister === "login"
+                      ? "hover:text-opacity-50 cursor-pointer text-gray-400"
+                      : "cursor-default" +
+                        " " +
+                        "text-" +
+                        finalColorForImgBackgroundMode
+                  } text-lg focus-1-offset`}
+                  onClick={() => {
+                    setLoginOrRegister("register");
+                  }}
+                >
+                  Register
+                </button>
+              </div>
+
+              <div className="mt-3 mb-5 flex flex-col items-center">
+                {loginOrRegister === "login" ? (
+                  <div className="w-48">
+                    <p>Email address / username</p>
+                    <Profile_input
+                      ref={firstFieldRef}
+                      inputValue={email_or_name}
+                      setInputValue={setEmail_or_name}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className="w-48">
+                      <p>Username</p>
+                      <Profile_input
+                        inputValue={name}
+                        setInputValue={setName}
+                      />
+                    </div>
+                    <div className="mt-1 w-48">
+                      <p>Email address</p>
+                      <Profile_input
+                        inputValue={email}
+                        setInputValue={setEmail}
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div
+                  className={`${loginOrRegister === "register" ? "mt-3" : ""}`}
+                >
+                  <div className="mt-1 w-48">
+                    <p>Password</p>
+                    <Profile_input
+                      inputValue={loginOrRegister === "login"? password : passwordForRegister}
+                      setInputValue={loginOrRegister === "login" ?  setPassword : setPasswordForRegister}
+                    />
+                  </div>
+
+                  {loginOrRegister === "register" && (
+                    <div className="mt-1 w-48">
+                      <p>Confirm password</p>
+                      <Profile_input
+                        inputValue={passwordForRegisterConfirm}
+                        setInputValue={setPasswordForRegisterConfirm}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                {loginOrRegister === "login" ? (
+                  <button
+                    className={`w-24 border border-${uiColor} rounded-md px-1 pb-px hover:bg-${uiColor} hover:bg-opacity-50 transition-colors duration-150
+                  focus:outline-none focus-visible:ring-1 ring-${uiColor}`}
+                    onClick={() => {
+                      loginValidation();
+                    }}
+                  >
+                    Login
+                  </button>
+                ) : (
+                  <button
+                    className={`w-24 border border-${uiColor} rounded-md px-1 pb-px hover:bg-${uiColor} hover:bg-opacity-50 transition-colors duration-150
+                  focus:outline-none focus-visible:ring-1 ring-${uiColor}
+                  `}
+                  >
+                    Register
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </FocusLock>
+  );
+}
+
+export default Profile;
+
+
+
+
+
+
+
+//Profile_Input
+
+
+import React, { useState } from "react";
+
+interface Props {
+  // inputType: "name" | "email" | "name_or_email" | "password";
+  /* name?: string;
+  email?: string;
+  name_or_email?: string;
+  password?: string; */
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function Profile_input(
+  { inputValue, setInputValue }: Props,
+  passedRef: React.LegacyRef<HTMLInputElement> | undefined
+): JSX.Element {
+  const [inputHover, setInputHover] = useState(false);
+  /* 
+  @layer components {
+  .input-profile {
+    @apply pl-px border border-gray-200 h-7;
+  }
+}
+  */
+
+  // const [inputType, setInputType] = useState("name_or_email", "password")
+
+  /*   function calcValue() {
+    let value;
+
+    switch (inputType) {
+      case "name":
+        value = name;
+        break;
+      case "email":
+        value = email;
+        break;
+      case "name_or_email":
+        value = name_or_email;
+        break;
+      case "password":
+        value = password;
+        break;
+    }
+
+    return value;
+  } */
+
+  return (
+    <input
+      ref={passedRef}
+      type="text"
+      className="w-full pl-px border border-gray-200 h-7 hover:border-gray-300 transition-colors duration-150
+       focus-1"
+      style={{
+        borderTopColor: `${inputHover ? "#9CA3AF" : "#D1D5DB"}`,
+        transitionProperty:
+          "background-color, border-color, color, fill, stroke",
+        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+        transitionDuration: "150ms",
+      }}
+      onMouseEnter={() => {
+        setInputHover(true);
+      }}
+      onMouseLeave={() => {
+        setInputHover(false);
+      }}
+      onChange={(e) => {
+        setInputValue(e.target.value);
+      }}
+      value={inputValue}
+    />
+  );
+}
+
+export default React.forwardRef(Profile_input);
+
+
+
+
+===================
+backgroundImgContext
+
+import React from "react";
+
+import { BackgroundImgContext_i } from "../utils/interfaces";
+
+// undefined, so it can be initialised with no specific value
+export const BackgroundImgContext = React.createContext<
+  BackgroundImgContext_i | undefined
+>(undefined);
+
+// use in place of useContext in children (because Typescript)
+export function useBackgroundImgContext() {
+  const context = React.useContext(BackgroundImgContext);
+
+  if (context === undefined) {
+    throw new Error(
+      "useBackgroundImgContext must be used within a BackgroundImgContext.Provider"
+    );
+  }
+
+  return context;
+}
+
+
+================
+fetchQueryField
+
+import graphql = require("graphql");
+const fetch = require("node-fetch");
+
+import { NextFunction, Request, Response } from "express";
+
+interface ExpressReqRes {
+  req: Request;
+  res: Response;
+}
+
+
+const { GraphQLObjectType, GraphQLID, GraphQLString } = graphql;
+
+import { RssFetchType } from "../types/rssFetchType";
+import { User_i } from "../types/userType";
+
+export const rssFetchQueryField = {
+  type: RssFetchType,
+  args: { rssLink: { type: GraphQLString } },
+  async resolve(parent: User_i, { rssLink }: { rssLink: string }, request: any) {
+  // async resolve(parent: User_i, { rssLink }: { rssLink: string }) {
+    console.log("fetching RSS serverside starded graphql");
+    // @ts-ignore
+  //  console.log(req.isAuth);
+
+  // console.log("reqest")
+  // console.log(request)
+  console.log("request.isAuth")
+  console.log(request.isAuth)
+   
+  console.log("res")
+  // console.log(res)
+   
+    
+
+    let fetchedRss = await fetchRssUrl();
+    // console.log("fetchedRss");
+    // console.log(fetchedRss);
+
+    return fetchedRss;
+
+    async function fetchRssUrl() {
+      let baseFetchUrl = "http://localhost:4000/fetch_rss/";
+      let extendedRSSurl = `${rssLink}?format=xml`;
+
+      try {
+        // let response = await parser.parseURL(currentTab?.rssLink);
+        // return response;
+        let toSendUrl = encodeURIComponent(`${rssLink}`);
+
+        let response = await fetch(baseFetchUrl + toSendUrl);
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        let fetchedRssResponse = await response.json();
+
+        // console.log("fetched rss/*  */ response");
+        // console.log(fetchedRssResponse);
+        return fetchedRssResponse;
+      } catch (err) {
+        // let newResponse = await parser.parseURL(extendedRSSurl);
+        // return newResponse;
+        let newToSendUrl = encodeURIComponent(extendedRSSurl);
+
+        let newResponse = await fetch(baseFetchUrl + newToSendUrl);
+
+        if (!newResponse.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        return newResponse.json();
+      }
+    }
+  },
+};
+
+
+
+============ faviconFetch
+
+// favicon test
+/* let fetchTest1 = faviconFetch({ hostname: "wikipedia.org" });
+console.log(fetchTest1);
+let fetchTest2 = faviconFetch({ uri: "https://en.wikipedia.org/wiki/1986" });
+console.log(fetchTest2); */
+
+// let fetchTest2 = faviconFetch({ uri: "https://www.facebook.com/" });
+// console.log(fetchTest2);
+
+===== backgroundColor
+
+  function calcIconBackground(pageBackgroundColor: string) {
+    if (pageBackgroundColor === "white") {
+      return `$bg-${pageBackgroundColor}`;
+    }
+
+    if (pageBackgroundColor === "black") {
+      return `bg-white fill-current text-${backgroundColor}`;
+    }
+
+    let whiteRegex = /[3456789]00$/;
+
+    if (whiteRegex.test(pageBackgroundColor)) {
+      return `bg-white fill-current text-${backgroundColor}`;
+    } else {
+      return `$bg-${pageBackgroundColor}`;
+    }
+  }
+
+
+========= authContext
+
+import React from "react";
+
+import { AuthContext_i } from "../utils/interfaces";
+
+// undefined, so it can be initialised with no specific value
+export const AuthContext = React.createContext<AuthContext_i | undefined>(
+  undefined
+);
+
+// use in place of useContext in children (because Typescript)
+export function useAuthContext() {
+  const context = React.useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error(
+      "useAuthContext must be used within a AuthContext.Provider"
+    );
+  }
+
+  return context;
+}
+
+
+//// graphqlQueries.ts
+
+export const RssFetchQuery = `query ($rssLink: String) {
+    rssFetch (rssLink: $rssLink) {
+      rssFetchData
+    }
+    }`;
+
+
+==========useLoggedInState
+
+import create from "zustand";
+
+export const useLoggedInState = create<{
+  loggedInState: boolean;
+  setLoggedInState: (trueOrFalse: boolean) => void;
+}>((set) => ({
+  loggedInState: false,
+  setLoggedInState: (trueOrFalse) =>
+    set((state) => ({
+      ...state,
+      loggedInState: trueOrFalse,
+    })),
+}));
+
+
+========== dbContext
+import React from "react";
+
+import { DbContext_i } from "../utils/interfaces";
+
+// undefined, so it can be initialised with no specific value
+export const DbContext = React.createContext<DbContext_i | undefined>(
+  undefined
+);
+
+// use in place of useContext in children (because Typescript)
+export function useDbContext() {
+  const context = React.useContext(DbContext);
+
+  if (typeof context === "undefined") {
+
+    // throw new Error(
+    //   "useUpperUiContext must be used within a UpperUiContext.Provider"
+    // );
+    // console.log("user not authenticated - no context");
+    return
+  }
+
+  return context;
+}
+
+>> in Main
+
+ // dbValue = userIdOrNoId
+  //   ? {
+  //       bookmarks: bookmarks as BookmarkDatabase_i[],
+  //       tabs: tabs as TabDatabase_i[],
+  //       // stale_bookmarks,
+  //       reexecuteBookmarks,
+  //       // reexecuteTabs,
+  //     }
+  //   : undefined;
+
+
+
+============== background img db code
+
+===== BackgroundImgSchema
+
+import { model, Schema } from "mongoose";
+import { BackgroundImg } from "../schema/types/backgroundImgType";
+
+const BackgroundImgSchema = new Schema<BackgroundImg>({
+  // we don't have to pass id, because mongoDB will create it manualy
+  userId: String,
+  //  img: { data: Buffer, contentType: String }
+  backgroundImg: String,
+});
+
+module.exports = model("BackgroundImg", BackgroundImgSchema);
+
+
+===== in server.ts inside backgroundImgUpload
+      // BackgroundImgSchema.replaceOne(
+      //   { userId: userId },
+      //   newBackgroundImg,
+      //   { upsert: true },
+      //   (err: Error, backgroundImgProduct: BackgroundImg) => {
+      //     if (err) {
+      //       console.log(err);
+      //       res.status(500).json({
+      //         error: err,
+      //       });
+      //       removeBackgroundImg(newBackgroundImageName, userId);
+      //       return;
+      //     }
+      //     let dest = "backgroundImgs/" + userId + "/";
+      //     fs.readdirSync(dest).forEach((file: string) => {
+      //       // console.log(file);
+      //       if (file !== newBackgroundImageName) {
+      //         // removeBackgroundImg(file, req.params.userId);
+      //         // removeBackgroundImg(file, userIdOrTestId);
+      //         removeBackgroundImg(file, userId);
+      //       }
+      //     });
+      //     // might be not needed
+      //     res.status(201).json({
+      //       message: "Created product successfully",
+      //       createdProduct: backgroundImgProduct,
+      //     });
+      //   }
+      // );
+
+==== backgroundImgType
+
+import graphql = require("graphql");
+
+const {
+  GraphQLObjectType,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLString,
+  GraphQLBoolean,
+} = graphql;
+
+export interface BackgroundImg {
+  userId: string;
+  backgroundImg: string;
+}
+
+export const BackgroundImgFields = {
+  // userId: { type: GraphQLID },
+  backgroundImgUrl: { type: GraphQLString },
+};
+
+
+export const BackgroundImgType = new GraphQLObjectType({
+  name: "BackgroundImg",
+  fields: () => ({
+    ...BackgroundImgFields,
+  }),
+});
+
+
+in case the code is being brought back -> deletion of img from db should be implemented
+
+
+======== background img route
+
+var express = require("express");
+var router = express.Router();
+import fs = require("fs");
+
+import { Response } from "express";
+
+import { RequestWithAuth } from "../schema/middleware/isAuth";
+
+router.get("/:userId", (req: RequestWithAuth, res: Response) => {
+  // console.log("GETTING BACKGROUND IMG");
+
+  let backgroundImgFiles = fs.readdirSync(
+    "backgroundImgs/" + req.params.userId
+  );
+  let backgroundImgUrl =
+    "background_img/" + req.params.userId + "/" + backgroundImgFiles[0];
+
+  if (!backgroundImgUrl) {
+    res.status(500).json({
+      error: "No background image available",
+    });
+    return;
+  }
+  res.status(201).json({
+    backgroundImgUrl: backgroundImgUrl,
+  });
+});
+module.exports = router;
+
+
+
+
+
+
+
+
+

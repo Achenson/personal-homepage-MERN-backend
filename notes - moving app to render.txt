@@ -1,0 +1,3 @@
+"dev": "npm-run-all -p server client",
+
+app should be started by npm run server
