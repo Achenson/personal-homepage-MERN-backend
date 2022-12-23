@@ -24,7 +24,7 @@ export const backgroundImgQueryField = {
 
     if (!request.isAuth) return;
 
-/* logic before implementing imgbb
+    /* logic before implementing imgbb
     let backgroundImgFiles = fs.readdirSync(
       path.join(__dirname, "..", "..", "backgroundImgs", userId)
     );
@@ -68,7 +68,6 @@ export const backgroundImgQueryField = {
           backgroundImgUrl: "No image url in the database",
         };
       }
-      
 
       if (backgroundImgUrlRes?.URL) {
         const downloadOptions = {
@@ -86,12 +85,24 @@ export const backgroundImgQueryField = {
           .catch((err) => console.error(err));
       }
 
-      return null
+      return null;
     }
 
-    let backgroundImgUrl =
-      "https://smoothtabs-api.onrender.com/" + "background_img/" + userId + "/" + backgroundImgFiles[0];
-      // "background_img/" + userId + "/" + backgroundImgFiles[0];
+    let backgroundImgUrl: string;
+
+    if (process.env.NODE_ENV === "production") {
+      backgroundImgUrl =
+        "https://smoothtabs-api.onrender.com/" +
+        "background_img/" +
+        userId +
+        "/" +
+        backgroundImgFiles[0];
+    } else {
+      backgroundImgUrl =
+        "background_img/" + userId + "/" + backgroundImgFiles[0];
+    }
+
+    // "background_img/" + userId + "/" + backgroundImgFiles[0];
 
     if (backgroundImgUrl) {
       return {
