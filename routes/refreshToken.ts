@@ -18,6 +18,7 @@ router.post("/", async (req: RequestWithAuth, res: Response) => {
   const token = req.cookies.jid;
 
   if (!token) {
+    console.log("no token");
     return res.status(401).send({ ok: false, accessToken: null, userId: null });
   }
 
