@@ -88,19 +88,19 @@ export const backgroundImgQueryField = {
       return null;
     }
 
-    // let backgroundImgUrl: string;
+    let backgroundImgUrl: string;
 
-    // if (process.env.NODE_ENV === "production") {
-    //   backgroundImgUrl =
-    //     "https://smoothtabs-api.onrender.com/" +
-    //     "background_img/" +
-    //     userId +
-    //     "/" +
-    //     backgroundImgFiles[0];
-    // } else {
-    let backgroundImgUrl =
+    if (process.env.NODE_ENV === "production") {
+      backgroundImgUrl =
+        "https://smoothtabs-api.onrender.com/" +
+        "background_img/" +
+        userId +
+        "/" +
+        backgroundImgFiles[0];
+    } else {
+    backgroundImgUrl =
       "background_img/" + userId + "/" + backgroundImgFiles[0];
-    // }
+    }
 
     // "background_img/" + userId + "/" + backgroundImgFiles[0];
 
