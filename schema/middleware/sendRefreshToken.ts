@@ -3,7 +3,8 @@ import {Response} from "express"
 module.exports = (res: Response, token: String) => {
   console.log("SENDING REFRESH TOKEN");
     res.cookie("jid", token, {
-      domain: "smoothtabs.onrender.com",
+      // domain: "smoothtabs.onrender.com",
+      domain: "onrender.com",
       httpOnly: true,
       // to prevent sending cookie in every request
       path: "/",
