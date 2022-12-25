@@ -65,8 +65,8 @@ app.use(
       // more specific routes: not needed! http://localhost:4000" is an origin and everything after is allowed
     ],
     credentials: true,
-    allowedHeaders: "Content-Type,*",
-    methods: "GET,POST"
+    allowedHeaders: "Access-Control-Allow-Headers,Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization",
+    methods: "GET,HEAD,OPTIONS,POST,PUT"
   })
 );
 
