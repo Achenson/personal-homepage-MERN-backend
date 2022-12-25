@@ -7,8 +7,8 @@ module.exports = (res: Response, token: String) => {
       // domain: "onrender.com",
       httpOnly: true,
       // to prevent sending cookie in every request
-      path: "/",
-      // path: "/refresh_token",
+      // path: "/",
+      path: "/refresh_token",
       // if expires is not set, the cookie will be session only
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       // sameSite is set to "lax" in modern browsers, but it still should be specified
