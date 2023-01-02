@@ -1,3 +1,26 @@
 "dev": "npm-run-all -p server client",
 
-app should be started by npm run server
+development:
+
+BACKEND
+
+starting server - npm run server
+
+server.ts - swap commented out code for helmet (applies also to Heroku version)
+
+FRONTEND
+
+starting frontend: npm run start
+
+tailwind.ts - comment out one line of code in purge (applies also to Heroku version)
+
+code changes compared to Heroku:
+
+- code shared between frontend and backend had to be duplicated (types)
+- dependencies shared had to be installed separetely in frontedn and backend
+- frontend - type issue (wrong type coercion?) in Bookmarks & Tabs corrected  
+- some @ts-ignores had to be added (both frontend and backend?)
+- frontend: MainRoute - longer timeout for reexecuting of background img fetching
+
+
+
