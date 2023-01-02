@@ -1,4 +1,20 @@
-# SmoothTabs - personal homepage [fullstack]
+# SmoothTabs - personal homepage [backend]
+
+This repository contains code for backend part of an app hosted on Render. 
+
+Frontend part of the app:
+
+https://github.com/Achenson/personal-homepage-MERN-frontend
+
+Previous monorepo code for Heroku (no longer working due to removal of Heroku free tier):
+
+https://github.com/Achenson/personal-homepage-MERN
+
+Known issues compared to Heroku version:
+
+- After period of inactivity, backend part of the app spin up much slower. This results is noticable delay until the following functionalities are available: logging in, registering, token refreshing, rss fetching 
+
+## Info
 
 Manage bookmarks, RSS channels and notes in a form of draggable & foldable tabs.
 
@@ -29,6 +45,5 @@ App inspired by iGTab - https://igtab.com/
 
 ## Live app
 
-https://smoothtabs.herokuapp.com/
-
+https://smoothtabs.onrender.com/
 
